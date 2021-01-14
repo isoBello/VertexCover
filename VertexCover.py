@@ -1,29 +1,24 @@
 #!/VertexCover/venv/bin python3.6
 # -*- coding: utf-8 -*-
 
-def vertex_cover(vertices, edges):
+def vertex_cover(vertices, edges, degrees):
     conjunto_P = []
     covered = []
-    degrees = {}
-
-    for v in edges:
-        degrees[v[0]] = degrees.get(v[0], 0) + 1
 
     while vertices:
-        try:
-            max_degree = max(degrees, key=degrees.get)
-            if max_degree not in covered:
+        max_degree = max(degrees, key=degrees.get)
+        degrees.pop(max_degree)
+        if max_degree not in covered:
+            try:
                 conjunto_P.append(max_degree)
+                covered.append(max_degree)
                 vertices.remove(max_degree)
-                for v in edges:
-                    if v[0] == max_degree:
-                        covered.append(v[1])
-                        vertices.remove(v[1])
-                        edges.remove(v)
-                del degrees[max_degree]
-            else:
-                del degrees[max_degree]
-        except ValueError:
-            continue
+                covered.extend(edges.get(max_degree))
+                vertices = list_difference(vertices, covered)
+            except ValueError:
+                continue
+    print(len(conjunto_P))
 
-    print(conjunto_P)
+
+def list_difference(l1, l2):
+    return list(set(l1) - set(l2))
